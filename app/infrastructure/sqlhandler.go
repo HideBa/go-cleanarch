@@ -3,7 +3,9 @@ package infrastructure
 import (
 	"database/sql"
 
+	"github.com/HideBa/go-cleanarch/app/config"
 	"github.com/HideBa/go-cleanarch/app/interfaces/database"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type SqlHandler struct {
@@ -11,7 +13,7 @@ type SqlHandler struct {
 }
 
 func NewSqlHandler() database.SqlHandler {
-	conn, err := sql.Open("mysql", "root:@tcp(db:3306)/sample")
+	conn, err := sql.Open("mysql", config.GetConfig().DBConfig.DBUrl)
 	if err != nil {
 		panic(err.Error())
 	}
