@@ -6,6 +6,9 @@ import (
 	"github.com/HideBa/go-cleanarch/app/config"
 	"github.com/HideBa/go-cleanarch/app/interfaces/database"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 type SqlHandler struct {
@@ -14,6 +17,9 @@ type SqlHandler struct {
 
 func NewSqlHandler() database.SqlHandler {
 	conn, err := sql.Open("mysql", config.GetConfig().DBConfig.DBUrl)
+	driver, _ := mysql.WithInstance(conn, &mysql.Config{})
+	m, _ := migrate.NewWithDatabaseInstance("file://app/infrastructure/migrations", "mysql", driver)
+	m.Steps(2)
 	if err != nil {
 		panic(err.Error())
 	}
