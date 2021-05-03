@@ -2,6 +2,8 @@ package infrastructure
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 
 	"github.com/HideBa/go-cleanarch/app/config"
 	"github.com/HideBa/go-cleanarch/app/interfaces/database"
@@ -16,10 +18,17 @@ type SqlHandler struct {
 }
 
 func NewSqlHandler() database.SqlHandler {
+	fmt.Printf("-----------%v", os.Getenv("DB_URL"))
 	conn, err := sql.Open("mysql", config.GetConfig().DBConfig.DBUrl)
+	if err != nil {
+		panic(err.Error())
+	}
 	driver, _ := mysql.WithInstance(conn, &mysql.Config{})
-	m, _ := migrate.NewWithDatabaseInstance("file://app/infrastructure/migrations", "mysql", driver)
-	m.Steps(2)
+	m, err := migrate.NewWithDatabaseInstance("file://app/infrastructure/migrations", "mysql", driver)
+	if err != nil {
+		panic(err.Error())
+	}
+	err = m.Steps(2)
 	if err != nil {
 		panic(err.Error())
 	}
