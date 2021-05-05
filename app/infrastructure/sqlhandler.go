@@ -8,8 +8,6 @@ import (
 	"github.com/HideBa/go-cleanarch/app/config"
 	"github.com/HideBa/go-cleanarch/app/interfaces/database"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
@@ -23,15 +21,15 @@ func NewSqlHandler() database.SqlHandler {
 	if err != nil {
 		panic(err.Error())
 	}
-	driver, _ := mysql.WithInstance(conn, &mysql.Config{})
-	m, err := migrate.NewWithDatabaseInstance("file://app/infrastructure/migrations", "mysql", driver)
+	// driver, _ := mysql.WithInstance(conn, &mysql.Config{})
+	// m, err := migrate.NewWithDatabaseInstance("file://infrastructure/migrations", "mysql", driver)
 	if err != nil {
 		panic(err.Error())
 	}
-	err = m.Steps(2)
-	if err != nil {
-		panic(err.Error())
-	}
+	// err = m.Up()
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
 	sqlHandler := new(SqlHandler)
 	sqlHandler.Conn = conn
 	return sqlHandler
